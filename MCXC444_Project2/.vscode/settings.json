@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "fsl_adapter_flash.h": "c",
+        "fsl_debug_console.h": "c",
+        "flash_partitioning.h": "c",
+        "fsl_device_registers.h": "c",
+        "mcuboot_app_support.h": "c",
+        "platform_bindings.h": "c"
+    }
+}

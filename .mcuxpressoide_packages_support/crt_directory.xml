@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?debugstack-directory version="1.0"?>
+<directory xmlns:xi="http://www.w3.org/2001/XInclude">
+   <xi:include href="file:/C:/Users/ADMIN/Documents/MCUXpressoIDE_11.10.0_3148/workspace/.mcuxpressoide_packages_support/MCXA153_support/MCXA1XX_dir_part.xml"/>
+   <xi:include href="file:/C:/Users/ADMIN/Documents/MCUXpressoIDE_11.10.0_3148/workspace/.mcuxpressoide_packages_support/MCXC444_support/MCXC444_dir_part.xml"/>
+   <xi:include href="file:/C:/Users/ADMIN/Documents/MCUXpressoIDE_11.10.0_3148/workspace/.mcuxpressoide_packages_support/MCXC444_support/MCXC444_dir_part.xml"/>
+   <xi:include href="file:/C:/Users/ADMIN/Documents/MCUXpressoIDE_11.10.0_3148/workspace/.mcuxpressoide_packages_support/MCXC444_support/MCXC444_dir_part.xml"/>
+   <xi:include href="file:/C:/Users/ADMIN/Documents/MCUXpressoIDE_11.10.0_3148/workspace/.mcuxpressoide_packages_support/MCXC144_support/MCXC144_dir_part.xml"/>
+   <xi:include href="file:/C:/Users/ADMIN/Documents/MCUXpressoIDE_11.10.0_3148/workspace/.mcuxpressoide_packages_support/MCXA153_support/MCXA1XX_dir_part.xml"/>
+</directory>

@@ -1,0 +1,8 @@
+ZephyrRTOS_TAD_logs/*
+FreeRTOS_TAD_logs/*
+AzureRTOS_TAD_logs/*
+MCXA153_Project/Release/*
+MCXA153_Project/Debug/*
+.vscode/*
+.metadata/*
+/.metadata/
