@@ -21,4 +21,5 @@
 void BOARD_InitDebugConsole(void)
 {
     /* The user initialization should be placed here */
+    SEGGER_RTT_Init();
 }

@@ -21,7 +21,7 @@ const char FW_VERSION[] = "1.0.7";
 extern void HW_Test(void);
 #endif
 /* TODO: insert other include files here. */
-
+#include "SEGGER_RTT.h"
 /* TODO: insert other definitions and declarations here. */
 
 /*
@@ -49,7 +49,9 @@ int main(void) {
     	HW_Test();
     }
 #endif
+	SEGGER_RTT_WriteString(0, "enter superloop\n");
     while(1){
+    	SEGGER_RTT_WriteString(0, "running superloop\n");
         Button_Handler();
         Lora_Main();
         Proc_Process();
