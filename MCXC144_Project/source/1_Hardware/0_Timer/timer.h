@@ -13,5 +13,4 @@ void Timer_Init(void);
 void System_DelayMs(uint32_t ms);
 void Timer_Create(timer_t* t, uint64_t intervalMs);
 uint64_t Timer_Timeout(timer_t* t);
-
 #endif /*__TIMER_H*/

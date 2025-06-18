@@ -47,6 +47,7 @@ void Lora_SendNodeData(Lora_Nema_data_t* data)
     data->byte_cnt = DATA_NEMA;
     Lora_Data2Msg(Lora_Message_buf, (uint8_t*)data, &size_message,Lora_GetRSSI());
     Lora_SendMsg(Lora_Message_buf, size_message);
+    LOG("Node sends data successfully\r\n");
 }
 #endif
 /*------------------------------------------------------------------------------
@@ -64,12 +65,16 @@ void Lora_SendRes_NodeID(void)
     node.byte_cnt = NODE_INFO;
     Lora_GetMacAddress(&node.mac);
     node.model_id = MODEL_ID;
+    LOGF("The Node model ID: %d", MODEL_ID);
     node.fw_ver_major = UserData_getPointer()->SystemData.Fw_ver_major;
     node.fw_ver_minor = UserData_getPointer()->SystemData.Fw_ver_minor;
     node.fw_ver_path = UserData_getPointer()->SystemData.Fw_ver_path;
     uint32_t size_message = 0;
-    Lora_Data2Msg(Lora_Message_buf, &node, &size_message,Lora_GetRSSI());
+    // This line is to format the data to a message
+    Lora_Data2Msg(Lora_Message_buf, &node, &size_message, Lora_GetRSSI());
+	// This line is to send the message via Lora
     Lora_SendMsg(Lora_Message_buf, size_message);
+	LOG("Node ID sent successfully\r\n");
 }
 
 /*------------------------------------------------------------------------------
@@ -95,7 +100,7 @@ void Send_LoraConfirm_Req(Lora_MsgStatus_t status)
 *Engineer     : HuyDoan
 *Historical   : 1. November 19, 2024
 *Function name: Lora_send_Ack
-*Description  : Send Ack message when recieved data via Lora.
+*Description  : Send Ack message when received data via Lora.
 *Input        : uint16_t lora_id - id of node.
                 Lora_CmdId_t cmd_id  The struct of cmd id 
 *Output       : None.

@@ -34,6 +34,13 @@ extern "C" {
 #define BOARD_UART_IRQ_HANDLER    LPUART0_IRQHandler
 
 #define BOARD_DEBUG_UART_BAUDRATE 115200
+
+// Debugging Macros
+#define LOG(msg) SEGGER_RTT_printf(0, "[%s:%d] - %s\n", __FUNCTION__, __LINE__, msg)
+#define LOGF(fmt, ...) SEGGER_RTT_printf(0, "[%s:%d] - " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+
+
+
 /**
  * @brief 	Initialize board specific settings.
  */

@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\board",
+    "\\middleware\\SEGGER",
+    "\\middleware\\SEGGER\\RTT",
+    "\\source",
+    "\\source\\1_Hardware",
+    "\\source\\1_Hardware\\1_Lora",
+    "\\source\\2_Middle",
+    "\\source\\2_Middle\\1_Lora",
+    "\\source\\3_Application",
+    "\\source\\3_Application\\1_Proc_Lora"
+  ],
+  "SelectedNode": "\\source\\Node_Ligthing_main.c",
+  "PreviewInSolutionExplorer": false
+}

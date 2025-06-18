@@ -134,8 +134,8 @@ CMD_BL0942 = 1,
 
 typedef struct
 {
-    enum_ProcID  eProc;
-    enum_CMDID   eCmd;
+    enum_ProcID  eProc; // Type of process (PROC_LORA, ...)
+	enum_CMDID   eCmd; // Type of command (CMD_LORA_SEND_DATA, CMD_LORA_SEND_ACK, ...)
 } structProcHandler;
 
 void Proc_Process(void);

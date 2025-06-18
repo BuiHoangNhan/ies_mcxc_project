@@ -50,8 +50,11 @@ void Driver_Init(void)
     HAL_FlashInit();
     UserData_init();
     Timer_Init();
+    // This function Initialize the Pair button PD1.
     Pair_gpio_init();
+	// This function Initialzize the Boot button PC2.
     Boot_gpio_init();
+	// This function initializes the LoRa module and sets up the necessary configurations.
     Lora_Init();
 #if LCD_CONTROLER
     Button_init();
@@ -121,6 +124,8 @@ static void Node_stateProc(void)
     Sensor_t *Sensor = Sensor_get_value();
     enum_AlertType CurALERT = ALERT_GET;
     enum_Provision_state *Provision_status = Lora_Provision_Succes();
+    int lora_main_flag = 0; // flag for checking lora_main running in
+
     if(*Provision_status == PROVISION_SUCCESS)
     {   
         OTA_Timeout();
@@ -137,17 +142,64 @@ static void Node_stateProc(void)
 }
 void Proc_Process(void)
 {
-	enum_Provision_state *Provision_status = Lora_Provision_Succes();
-    bool is_provisioned = (*Provision_status == PROVISION_SUCCESS);
+	LOG("Enter Proc_Process\r\n");
+	enum_Provision_state *Provision_status = Lora_Provision_Succes(); // Provision status
+	if (*Provision_status == PROVISION_SUCCESS)
+			LOG("Provision Success\r\n");
+	else if (*Provision_status == PROVISION_PENDING)
+			LOG("Provision is Pending\r\n");
+	else
+			LOG("Provision none\r\n");
+
+    bool is_provisioned = (*Provision_status == PROVISION_SUCCESS); // Check whether the provision is succeed or not.
     Proc_change_Systick_ProcCmd();
     if (*Provision_status == PROVISION_NONE) {
+        LOG("Sending provision request to Gateway...");
         Proc_Change_ProcCmd(PROC_LORA, CMD_LORA_PROVISION);
     } else if (ProcHandler[ProcHandlerTail].eProc == PROC_LORA && 
                 ProcHandler[ProcHandlerTail].eCmd == CMD_LORA_PROVISION) {
+        LOG("Node is connected to Gateway\r\n");
         Proc_Clear_ProcCmd();
     }
     curProcHandler = ProcHandler[ProcHandlerTail];
     if (is_provisioned || ProcHandler[ProcHandlerTail].eProc == PROC_LORA) {
+    	switch (ProcHandler[ProcHandlerTail].eProc)
+    	{
+    	    case PROC_NONE:
+    	        LOG("Proceeding to execute process: PROC_NONE\r\n");
+    	        break;
+
+    	    case PROC_BL0942:
+    	        LOG("Proceeding to execute process: PROC_BL0942\r\n");
+    	        break;
+
+    	#if LCD_CONTROLER
+    	    case PROC_LCD_UPDATE:
+    	        LOG("Proceeding to execute process: PROC_LCD_UPDATE\r\n");
+    	        break;
+
+    	    case PROC_RELAY:
+    	        LOG("Proceeding to execute process: PROC_RELAY\r\n");
+    	        break;
+
+    	#elif NODE_NEMA
+    	    case PROC_SENSOR:
+    	        LOG("Proceeding to execute process: PROC_SENSOR\r\n");
+    	        break;
+
+    	    case PROC_DIMMER:
+    	        LOG("Proceeding to execute process: PROC_DIMMER\r\n");
+    	        break;
+    	#endif
+
+    	    case PROC_LORA:
+    	        LOG("Proceeding to execute process: PROC_LORA\r\n");
+    	        break;
+
+    	    default:
+    	        LOGF("Unknown process ID: %d\r\n", ProcHandler[ProcHandlerTail].eProc);
+    	        break;
+    	}
         switch (ProcHandler[ProcHandlerTail].eProc) {
 #if LCD_CONTROLER
             case PROC_BL0942:
@@ -163,14 +215,17 @@ void Proc_Process(void)
                 break;
 #elif NODE_NEMA
             case PROC_DIMMER:
+                LOG("Executing Button_relay_dimmer\r\n");
                 Proc_Led_Button_Relay_Dimmer();
                 break;
                 
             case PROC_SENSOR:
+                LOG("Executing Proc_sensor\r\n");
                 Proc_sensor();
                 break;
 #endif
             case PROC_LORA:
+                LOG("Executing Proc_Lora_Main\r\n");
                 Proc_Lora_Main();
                 break;
                 
@@ -179,6 +234,7 @@ void Proc_Process(void)
                 break;
         }
     }
+
     if(ProcHandler[ProcHandlerTail].eProc!=PROC_NONE) {
         Proc_Clear_ProcCmd();
     }
@@ -187,11 +243,13 @@ void Proc_Process(void)
     {
         if(Provision_pendingTimeout())
         {
+            LOG("Provision timeout - will retry\r\n");
             *Provision_status = PROVISION_NONE;
         }
     }
     if(is_provisioned) {
         Node_stateProc();
+        LOG("Node is now running normally\r\n");
     }
 #if LCD_CONTROLER
     LCD_RemainTime_check();

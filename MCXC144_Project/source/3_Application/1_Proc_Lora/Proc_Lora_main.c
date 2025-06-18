@@ -164,6 +164,7 @@ void Lora_Provision(void)
         Lora_SetChannel(ChannelID_list[index]);
         Lora_SetPainID(PainID_list[index]);
         System_DelayMs(500);
+        // This function is for the Node send their NodeID
         Lora_SendRes_NodeID();
         index++;
     }   
@@ -211,6 +212,7 @@ static void Lora_respondId_Revc(uint16_t lora_id, Lora_node_config_t data)
 
 void Lora_Init(void)
 {
+	LOG("Lora_Init Started\r\n");
     Lora_Msg2Data_cb_t callback ={
         .lora_requestData_cb = Lora_Revc_resqData,
         .lora_firmware_cb = Lora_FW_cb_Revc,
@@ -228,10 +230,12 @@ void Lora_Init(void)
         .lora_lightCmd_cb = Lora_Revc_LightCmd,
 #endif
     } ;
-    Lora_RegisterMsg2DataCallback( callback);
+    Lora_RegisterMsg2DataCallback(callback);
     Lora_uart_init();
     Lora_rst_init();
+    // This function is to configure the LoRa, and establish basic parameters for communication.
     Lora_at_init();
+	LOG("Lora_Init Finished\r\n");
 }
 
 void Proc_Lora_Main(void)
@@ -239,6 +243,7 @@ void Proc_Lora_Main(void)
     switch (Proc_GetCmd())
     {
     case CMD_LORA_SEND_REQ_NODEID:
+		LOG("Node starts sending NODEID\r\n");
     	Lora_SendRes_NodeID();
         break;
     case CMD_GW_SEND_CONFIG:
@@ -249,14 +254,15 @@ void Proc_Lora_Main(void)
 #elif NODE_NEMA
         Lora_Nema_data_t Node_data;
 #endif
-        Sensor_update_NodeValue(&Node_data);
-        Lora_SendNodeData(&Node_data);
+        Sensor_update_NodeValue(&Node_data); // Send data from sensor
+        Lora_SendNodeData(&Node_data); // This function is to send that data
         break;
     case CMD_LORA_SEND_ACK:
         break;
     case CMD_LORA_SEND_NACK:
         break;
     case CMD_LORA_PROVISION:
+            // This case is when Node send  their broadcast ID, and require for (PAN ID, channel)       
             Lora_Provision();
         break;
     case CMD_LORA_CF_REQ_ID:

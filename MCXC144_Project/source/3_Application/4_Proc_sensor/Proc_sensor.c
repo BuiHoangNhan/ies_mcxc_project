@@ -8,12 +8,15 @@ void Proc_sensor(void)
     {
 #if NODE_NEMA
         case CMD_SENSOR_LIGHT:
+        	LOG("Node is taking data from Sensor Light\r\n");
             Sensor_ADC_request(SENSOR_ADC16_LIGHT_CHANNEL);
         break;
         case CMD_SENSOR_TEMP:
+        	LOG("Node is taking data from Sensor Temperature\r\n");
             Sensor_ADC_request(SENSOR_ADC16_TEMPERATURE_CHANNEL);    
         break;
         case CMD_ATM90E26:
+        	LOG("Node is taking data from ATM90E26\r\n");
         	float Voltage_temp = GetLineVoltage();
             if(Voltage_temp!=0xffff&&Voltage_temp>0)
             {

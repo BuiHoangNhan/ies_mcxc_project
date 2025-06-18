@@ -639,22 +639,75 @@ void Lora_Main(void)
 {
         memset(&Lora_data_revc,0,sizeof(Data_revc_t));
         Lora_at_rxProcess(Lora_cbfn_parseMess, &Lora_data_revc, (uint8_t*)&Lora_msg_result, AT_CMD_NONE);
-        switch ( Lora_msg_result)
+        switch (Lora_msg_result) {
+        case MSG_NONE:
+            LOG("Lora_rx result: MSG_NONE\r\n");
+            break;
+        case MSG_READY:
+            LOG("Lora_rx result: MSG_READY\r\n");
+            break;
+        case MSG_BUSY:
+            LOG("Lora_rx result: MSG_BUSY\r\n");
+            break;
+        case MSG_OK:
+            LOG("Lora_rx result: MSG_OK\r\n");
+            break;
+        case MSG_ERROR:
+            LOG("Lora_rx result: MSG_ERROR\r\n");
+            break;
+        case MSG_NO_ROUTE:
+            LOG("Lora_rx result: MSG_NO_ROUTE\r\n");
+            break;
+        case MSG_NO_ACK:
+            LOG("Lora_rx result: MSG_NO_ACK\r\n");
+            break;
+        case MSG_SEND_OK:
+            LOG("Lora_rx result: MSG_SEND_OK\r\n");
+            break;
+        case MSG_SEND_FAIL:
+            LOG("Lora_rx result: MSG_SEND_FAIL\r\n");
+            break;
+        case MSG_SUCCESS:
+            LOG("Lora_rx result: MSG_SUCCESS\r\n");
+            break;
+        case MSG_LINE_BREAK:
+            LOG("Lora_rx result: MSG_LINE_BREAK\r\n");
+            break;
+        case MSG_ROUTER_READ:
+            LOG("Lora_rx result: MSG_ROUTER_READ\r\n");
+            break;
+        case MSG_RECIEVE:
+            LOG("Lora_rx result: MSG_RECIEVE\r\n");
+            break;
+        case MSG_RSSI:
+            LOG("Lora_rx result: MSG_RSSI\r\n");
+            break;
+        default:
+            SEGGER_RTT_WriteString(0, "Lora_rx result: Unknown (%d)\r\n", Lora_msg_result);
+            break;
+        }
+
+        switch (Lora_msg_result)
         	{
         		case MSG_NO_ACK:
                                 break;
                         case MSG_SUCCESS:
+                            LOG("Node connect successfully\r\n");
                                 break;
                         case  MSG_NO_ROUTE:
+							LOG("No route to destination, check routing table\r\n");
                                 break;
                         case  MSG_RECIEVE:
+                        	SEGGER_RTT_printf("Received LoRa msg from 0x%04X, type = 0x%02X\r\n", Lora_data_revc.src_address, Lora_data_revc.Option_type);
                         	Lora_msg_result = MSG_NONE;
                                 if((Lora_data_revc.Option_type == 0XC3)||(g_userData.SystemData.Provision_state != PROVISION_NONE && Lora_data_revc.src_address != g_userData.SystemData.Dst_addr))
                                 {
                                         break;
                                 }
+                                LOG("Processing message from Gateway, calling Lora_Msg2Data()\r\n");
                                 Lora_Msg2Data(Lora_data_revc.dst_address,&Lora_data_revc.content);                                
                                 Lora_SetDstAddr(Lora_data_revc.src_address);
+                                SEGGER_RTT_printf(0, "Gateway address set to 0x%04X\r\n", Lora_data_revc.src_address);
                                 break;
         		default:
 					break;

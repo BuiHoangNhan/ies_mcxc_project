@@ -80,6 +80,16 @@ void Sensor_update_NodeValue(Lora_Nema_data_t *Node_data)
     Node_data->light = (uint16_t)Sensor.Dim_value;
     Node_data->uptime = Cur_systic;
     Node_data->alert = Sensor.Alert;
+    // Log all values
+    LOGF("Sensor Data Updated:\r\n");
+    LOGF( "Voltage (U): %u (x0.01 V)\r\n", Node_data->U);
+    LOGF("Current (I): %u (x0.01 A)\r\n", Node_data->I);
+    LOGF("Power   (P): %u (x0.01 W)\r\n", Node_data->P);
+    LOGF("Temperature : %u (x0.01 C)\r\n", Node_data->temperature);
+    LOGF("Brightness  : %lu\r\n", Node_data->brightness);
+    LOGF("Light level : %u\r\n", Node_data->light);
+    LOGF("Uptime (ms) : %lu\r\n", Node_data->uptime);
+    LOGF("Alert code  : %u\r\n", Node_data->alert);
 }
 
 /*------------------------------------------------------------------------------

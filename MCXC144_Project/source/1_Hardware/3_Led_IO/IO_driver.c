@@ -141,11 +141,19 @@ void Ac_sensing_sel(uint8_t pin, uint8_t output)
 #elif NODE_NEMA
 gpio_pin_config_t DimOff_config =  {kGPIO_DigitalOutput, 0};
 
+/*
+*   When NODE_NEMA is active, the interrupt handler for PORTC_PORTD_IRQHandler
+*   checks for the falling edge on PD1. If triggered, it set the state and clear the interrupt flag
+*   The MCU groups Port C and Port D under the same interrupt vector.
+*   PD1 is 'pair' button, this button is used to pair node with gateway.
+*/
 void PORTC_PORTD_IRQHandler(void)
 {
 	if(GPIO_PortGetInterruptFlags(GPIO_PAIR_GPIO)&1U<<GPIO_PAIR_PIN)
     {
+		// Button_setState is in the Button.c file
         Button_setState(GPIO_PortGetInterruptFlags(GPIO_PAIR_GPIO));
+		// Clear the interrupt flag for the pair button
         GPIO_PortClearInterruptFlags(GPIO_PAIR_GPIO,1U<<GPIO_PAIR_PIN);
     }
 

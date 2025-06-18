@@ -21,6 +21,9 @@ external_user_signals: {}
 #include "fsl_port.h"
 #include "pin_mux.h"
 
+// Added for Logging
+#include "board.h"
+
 /* FUNCTION ************************************************************************************************************
  *
  * Function Name : BOARD_InitBootPins

@@ -34,14 +34,15 @@ void Lora_SendNodeData(Lora_Nema_data_t* data)
 #endif
 void Lora_SendRes_NodeID(void)
 {
-    
     Lora_node_infor_t node;
     node.cmd_id = REQ_ID;
+    LOGF("Command ID: %d\r\n", REQ_ID);
     node.byte_cnt = NODE_INFO;
-    Lora_GetMacAddress(&node.mac);
+    +(&node.mac);
 #if LCD_CONTROLER
     node.model_id = 2;
 #elif NODE_NEMA
+    LOGF("Model ID: %d\r\n", 1);
     node.model_id = 1;
 #endif
     node.fw_ver_major = 0;
@@ -51,6 +52,7 @@ void Lora_SendRes_NodeID(void)
     uint32_t size_message = 0;
     Lora_Data2Msg(Lora_Message_buf, &node, &size_message,Lora_GetRSSI());
     Lora_SendMsg(Lora_Message_buf, size_message);
+    LOG("Lora sends message successfully\r\n");
 }
 
 void Send_LoraConfirm_Req(Lora_MsgStatus_t status)

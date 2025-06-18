@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 201, NXP
  * All rights reserved.
  *

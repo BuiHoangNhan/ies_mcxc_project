@@ -331,11 +331,11 @@ static inline void GPIO_PinWrite(GPIO_Type *base, uint32_t pin, uint8_t output)
 #if !(defined(FSL_FEATURE_GPIO_HAS_NO_INDEP_OUTPUT_CONTROL) && FSL_FEATURE_GPIO_HAS_NO_INDEP_OUTPUT_CONTROL)
     if (output == 0U)
     {
-        base->PCOR = GPIO_FIT_REG(1UL << pin);
+        base->PCOR = GPIO_FIT_REG(1UL << pin); // PCOR: Port Clear Output Register, to clear the output, we set the bit to 1.
     }
     else
     {
-        base->PSOR = GPIO_FIT_REG(1UL << pin);
+		base->PSOR = GPIO_FIT_REG(1UL << pin); // PSOR: Port Set Output Register, to set the output, we set the bit to 1.
     }
 #else
     if (output == 0U)

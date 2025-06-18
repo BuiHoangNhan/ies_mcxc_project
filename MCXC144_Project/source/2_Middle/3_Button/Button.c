@@ -54,6 +54,7 @@ void Button_Handler(void)
      Pair_button.isPressed = (Pair_button_read()==0)?true:false;
      if(Timer_Timeout(&Pair_button.timePressed)&&Pair_button.isPressed == true&& Pair_button.timer_state ==true)
      {
+		 LOG("Pair Button is pressed, start to provision\r\n");
         Lora_set_toProvision();
      }
      else if(Pair_button.isPressed == false&& Pair_button.timer_state==true&&!Timer_Timeout(&Pair_button.timePressed))
@@ -61,11 +62,13 @@ void Button_Handler(void)
         Pair_button.timer_state = false;
         if(UserData_getPointer()->SystemData.Provision_state == PROVISION_SUCCESS)
         {
+            LOG("Pair button is not pressed, but the provision is success\r\n");
             Proc_Change_ProcCmd(PROC_LORA, CMD_LORA_SEND_DATA);
         }
      }
      else if(Pair_button.isPressed == false)
      {
+        LOG("Pair button is not pressed\r\n");
         Pair_button.timer_state = false;
      }
 #if LCD_CONTROLER

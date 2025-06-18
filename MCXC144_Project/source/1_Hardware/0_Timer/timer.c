@@ -86,5 +86,5 @@ void Timer_Create(timer_t* t, uint64_t intervalMs)
 
 uint64_t Timer_Timeout(timer_t* t)
 {
-  return ((count > t->totalTickMs) ? 1 : 0);
+  return ((count > t -> totalTickMs) ? 1 : 0);
 }

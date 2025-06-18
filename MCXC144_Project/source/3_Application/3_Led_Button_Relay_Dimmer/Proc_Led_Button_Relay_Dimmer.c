@@ -42,6 +42,7 @@ void Proc_relay_Timeout(void)
 #elif NODE_NEMA
 void Proc_dimmer(void)
 {
+	LOG("Nodes start dimming the LED\r\n");
     Sensor_t *Sensor = Sensor_get_value();
     DimOff_set((Sensor->Dim_value!=0));
     bool DimStatus = false;
@@ -65,6 +66,7 @@ void Proc_dimmer(void)
         System_DelayMs(20);
     }
     CurDim_value = DimThreshold;
+    LOG("Nodes finish dimming the LED\r\n");
 }
 #endif
 void Proc_Led_Button_Relay_Dimmer(void)
