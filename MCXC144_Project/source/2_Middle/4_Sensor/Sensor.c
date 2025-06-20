@@ -89,7 +89,21 @@ void Sensor_update_NodeValue(Lora_Nema_data_t *Node_data)
     LOGF("Brightness  : %lu\r\n", Node_data->brightness);
     LOGF("Light level : %u\r\n", Node_data->light);
     LOGF("Uptime (ms) : %lu\r\n", Node_data->uptime);
-    LOGF("Alert code  : %u\r\n", Node_data->alert);
+    switch (Node_data->alert)
+    {
+	case ALERT_NONE:
+		LOG("Alert: None\r\n");
+		break;
+	case ALERT_OVER_VOLTAGE:
+		LOG("Alert: Over Voltage\r\n");
+		break;
+	case ALERT_OVER_CURRENT:
+		LOG("Alert: Over Current\r\n");
+		break;
+	case ALERT_OVER_POWER:
+		LOG("Alert: Over Power\r\n");
+		break;
+    }
 }
 
 /*------------------------------------------------------------------------------

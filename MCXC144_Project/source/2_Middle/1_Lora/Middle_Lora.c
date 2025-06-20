@@ -60,21 +60,24 @@ void Lora_SendNodeData(Lora_Nema_data_t* data)
 *-----------------------------------------------------------------------------*/
 void Lora_SendRes_NodeID(void)
 {
+	LOG("****** Sending Node ID to broadcast ******\r\n");
     Lora_node_infor_t node;
     node.cmd_id = REQ_ID;
     node.byte_cnt = NODE_INFO;
     Lora_GetMacAddress(&node.mac);
+	LOGF("MAC Address: %08X\r\n", node.mac);
     node.model_id = MODEL_ID;
-    LOGF("The Node model ID: %d", MODEL_ID);
+    LOGF("Model ID: %d", MODEL_ID);
     node.fw_ver_major = UserData_getPointer()->SystemData.Fw_ver_major;
     node.fw_ver_minor = UserData_getPointer()->SystemData.Fw_ver_minor;
     node.fw_ver_path = UserData_getPointer()->SystemData.Fw_ver_path;
+	LOGF("Firmware version: %d.%d.%d\r\n", UserData_getPointer()->SystemData.Fw_ver_major, UserData_getPointer()->SystemData.Fw_ver_minor, UserData_getPointer()->SystemData.Fw_ver_path);
     uint32_t size_message = 0;
     // This line is to format the data to a message
     Lora_Data2Msg(Lora_Message_buf, &node, &size_message, Lora_GetRSSI());
 	// This line is to send the message via Lora
     Lora_SendMsg(Lora_Message_buf, size_message);
-	LOG("Node ID sent successfully\r\n");
+    LOG("****** Ended Node ID to broadcast ******\r\n");
 }
 
 /*------------------------------------------------------------------------------

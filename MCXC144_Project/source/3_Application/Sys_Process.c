@@ -149,18 +149,22 @@ void Proc_Process(void)
 	else if (*Provision_status == PROVISION_PENDING)
 			LOG("Provision is Pending\r\n");
 	else
-			LOG("Provision none\r\n");
+			LOG("Provision None\r\n");
 
     bool is_provisioned = (*Provision_status == PROVISION_SUCCESS); // Check whether the provision is succeed or not.
     Proc_change_Systick_ProcCmd();
-    if (*Provision_status == PROVISION_NONE) {
+
+    if (*Provision_status == PROVISION_NONE)
+    {
         LOG("Sending provision request to Gateway...");
         Proc_Change_ProcCmd(PROC_LORA, CMD_LORA_PROVISION);
     } else if (ProcHandler[ProcHandlerTail].eProc == PROC_LORA && 
-                ProcHandler[ProcHandlerTail].eCmd == CMD_LORA_PROVISION) {
-        LOG("Node is connected to Gateway\r\n");
+                ProcHandler[ProcHandlerTail].eCmd == CMD_LORA_PROVISION) 
+    {
+        LOG("CONNECTED: Connected to Gateway - Clearing command\r\n");
         Proc_Clear_ProcCmd();
     }
+
     curProcHandler = ProcHandler[ProcHandlerTail];
     if (is_provisioned || ProcHandler[ProcHandlerTail].eProc == PROC_LORA) {
     	switch (ProcHandler[ProcHandlerTail].eProc)
@@ -235,15 +239,17 @@ void Proc_Process(void)
         }
     }
 
+	// This part is for clearing the process command after execution.
     if(ProcHandler[ProcHandlerTail].eProc!=PROC_NONE) {
         Proc_Clear_ProcCmd();
     }
 
+    // This part is for checking the provision status
     if(*Provision_status == PROVISION_PENDING && OTA_getState() == eOTA_Idle)
     {
         if(Provision_pendingTimeout())
         {
-            LOG("Provision timeout - will retry\r\n");
+            LOG("Disconnect: Provision timeout -  will retry\r\n");
             *Provision_status = PROVISION_NONE;
         }
     }

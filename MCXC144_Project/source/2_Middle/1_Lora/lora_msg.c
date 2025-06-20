@@ -13,6 +13,7 @@
 #include "lora_msg.h"
 #include "string.h"
 #include "crc16.h"
+#include "board.h" // just for logging
 /*******************************Definitions************************************/
 
 #define MSG2DATA 0x89
@@ -108,7 +109,9 @@ static void lora_parseTypeMsg(uint8_t type, uint8_t *msg, uint8_t *data){
         }
         break;
         case SEND_CMD:{
+			LOG("Received SEND_CMD\r\n");
             if(byte_cnt == LIGHT_CMD){
+				LOG("Received LIGHT_CMD\r\n");
                 lora_parseLightCmd(msg, (Lora_Nema_control_t *)(data));
             }
             else if(byte_cnt == RELAY_CMD){

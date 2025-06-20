@@ -46,14 +46,14 @@ int main(void) {
     uint8_t blIsBoot = Boot_button_read();
     enum_Provision_state isProvision = (UserData_getPointer()->SystemData.Provision_state == PROVISION_SUCCESS);
 	if (isProvision == PROVISION_SUCCESS) {
-		LOG("Provision Success\r\n");
+		LOG("Provision Success in Main loop\r\n");
 	}
 	else if(isProvision == PROVISION_PENDING)
 	{
-		LOG("Provision is Pending\r\n");
+		LOG("Provision is Pending in Main loop\r\n");
 	}
 	else
-		LOG("Provision None\r\n");
+		LOG("Provision None in Main loop\r\n");
 
 #if HW_PRETEST_FW
     if((blIsBoot==0)&&!isProvision)
@@ -63,6 +63,7 @@ int main(void) {
     	HW_Test();
     }
 #endif
+
     while(1){
         LOG("/****************** START OF WHILE LOOP ******************/\r\n");
         Button_Handler();
