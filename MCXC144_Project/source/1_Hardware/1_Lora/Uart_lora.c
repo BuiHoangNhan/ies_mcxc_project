@@ -5,7 +5,6 @@
  *      Author: Huy Doan
  */
 
-
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
@@ -24,7 +23,6 @@
 #include <stdbool.h>
 #include "Uart_lora.h"
 
-
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -36,17 +34,17 @@ void LORA_UserCallback(LPUART_Type *base, lpuart_dma_handle_t *handle, status_t 
  * Variables
  ******************************************************************************/
 
-#define UART_RX_BUFFER_SIZE (2*DMA_RX_BUFFER_SIZE+64)
+#define UART_RX_BUFFER_SIZE (2 * DMA_RX_BUFFER_SIZE + 64)
 volatile uint8_t p_bEsp32RxRingBuffer[UART_RX_BUFFER_SIZE];
-static volatile uint8_t* p_bEsp32RxHeadPtr = p_bEsp32RxRingBuffer;
-static volatile uint8_t* p_bEsp32RxTailPtr = p_bEsp32RxRingBuffer;
+static volatile uint8_t *p_bEsp32RxHeadPtr = p_bEsp32RxRingBuffer;
+static volatile uint8_t *p_bEsp32RxTailPtr = p_bEsp32RxRingBuffer;
 static volatile uint32_t overrun = 0;
 
 lpuart_dma_handle_t g_lpuartEdmaHandle;
 dma_handle_t g_lpuartTxEdmaHandle;
 dma_handle_t g_lpuartRxEdmaHandle;
-AT_NONCACHEABLE_SECTION_INIT(volatile uint8_t lora_txBuffer )= {0};
-AT_NONCACHEABLE_SECTION_INIT(volatile uint8_t lora_rxBuffer )= {0};
+AT_NONCACHEABLE_SECTION_INIT(volatile uint8_t lora_txBuffer) = {0};
+AT_NONCACHEABLE_SECTION_INIT(volatile uint8_t lora_rxBuffer) = {0};
 #if (defined(DEMO_EDMA_HAS_CHANNEL_CONFIG) && DEMO_EDMA_HAS_CHANNEL_CONFIG)
 extern edma_config_t userConfig;
 #else
@@ -64,22 +62,20 @@ void LORA_UserCallback(LPUART_Type *base, lpuart_dma_handle_t *handle, status_t 
 {
     if (kStatus_LPUART_TxIdle == status)
     {
-
     }
 
     if (kStatus_LPUART_RxIdle == status)
     {
         /* Read one byte from the receive data register */
-    	LPUART_TransferReceiveDMA(LORA_LPUART, &g_lpuartEdmaHandle, &lora_receiveXfer);
+        LPUART_TransferReceiveDMA(LORA_LPUART, &g_lpuartEdmaHandle, &lora_receiveXfer);
         if (p_bEsp32RxHeadPtr != p_bEsp32RxTailPtr - 1)
         {
-            if ((p_bEsp32RxHeadPtr != p_bEsp32RxRingBuffer + sizeof(p_bEsp32RxRingBuffer) - 1)
-                || (p_bEsp32RxTailPtr != p_bEsp32RxRingBuffer))
+            if ((p_bEsp32RxHeadPtr != p_bEsp32RxRingBuffer + sizeof(p_bEsp32RxRingBuffer) - 1) || (p_bEsp32RxTailPtr != p_bEsp32RxRingBuffer))
             {
                 *p_bEsp32RxHeadPtr++ = lora_rxBuffer;
                 if (p_bEsp32RxHeadPtr >= p_bEsp32RxRingBuffer + sizeof(p_bEsp32RxRingBuffer))
                 {
-                  p_bEsp32RxHeadPtr = (volatile uint8_t*) p_bEsp32RxRingBuffer;
+                    p_bEsp32RxHeadPtr = (volatile uint8_t *)p_bEsp32RxRingBuffer;
                 }
             }
         }
@@ -105,8 +101,8 @@ void Lora_uart_init(void)
     LPUART_GetDefaultConfig(&lpuartConfig);
     CLOCK_SetLpuart0Clock(0x1U);
     lpuartConfig.baudRate_Bps = BOARD_DEBUG_UART_BAUDRATE;
-    lpuartConfig.enableTx     = true;
-    lpuartConfig.enableRx     = true;
+    lpuartConfig.enableTx = true;
+    lpuartConfig.enableRx = true;
 
     LPUART_Init(LORA_LPUART, &lpuartConfig, LORA_LPUART_CLK_FREQ);
 
@@ -131,31 +127,36 @@ void Lora_uart_init(void)
 #endif
     /* Create LPUART DMA handle. */
     LPUART_TransferCreateHandleDMA(LORA_LPUART, &g_lpuartEdmaHandle, LORA_UserCallback, NULL, &g_lpuartTxEdmaHandle,
-                                    &g_lpuartRxEdmaHandle);
+                                   &g_lpuartRxEdmaHandle);
 
     /* Start to echo. */
-    lora_receiveXfer.data     = &lora_rxBuffer;
+    lora_receiveXfer.data = &lora_rxBuffer;
     lora_receiveXfer.dataSize = ECHO_BUFFER_LENGTH;
     LPUART_TransferReceiveDMA(LORA_LPUART, &g_lpuartEdmaHandle, &lora_receiveXfer);
-
-
 }
 
-void uart_put_bytes(uint8_t*cmdData, uint16_t dataSize)
+void uart_put_bytes(uint8_t *cmdData, uint16_t dataSize)
 {
-    lora_sendXfer.data        = cmdData;
-    lora_sendXfer.dataSize    = dataSize;
-	LPUART_TransferSendDMA(LORA_LPUART, &g_lpuartEdmaHandle, &lora_sendXfer);
+    LOGF("UART TX %u bytes:", dataSize);
+    for (uint16_t i = 0; i < dataSize; i++)
+    {
+        LOGF("UART TX Byte: 0x%02X", cmdData[i]);
+    }
+    LOG("\r\n");
+    lora_sendXfer.data = cmdData;
+    lora_sendXfer.dataSize = dataSize;
+    LPUART_TransferSendDMA(LORA_LPUART, &g_lpuartEdmaHandle, &lora_sendXfer);
 }
 
-uint32_t uart_get_char(uint8_t * bChar)
+uint32_t uart_get_char(uint8_t *bChar)
 {
     if (p_bEsp32RxHeadPtr != p_bEsp32RxTailPtr)
     {
         *bChar = *p_bEsp32RxTailPtr++;
+        LOGF("UART RX byte: 0x%02X", *bChar);
         if (p_bEsp32RxTailPtr >= p_bEsp32RxRingBuffer + sizeof(p_bEsp32RxRingBuffer))
         {
-            p_bEsp32RxTailPtr = (volatile uint8_t*) p_bEsp32RxRingBuffer;
+            p_bEsp32RxTailPtr = (volatile uint8_t *)p_bEsp32RxRingBuffer;
         }
         return 1;
     }
@@ -185,4 +186,3 @@ void Lora_uart_main(void)
 {
     LPUART_TransferReceiveDMA(LORA_LPUART, &g_lpuartEdmaHandle, &lora_receiveXfer);
 }
-

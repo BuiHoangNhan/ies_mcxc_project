@@ -382,6 +382,7 @@ uint32_t Lora_at_cmdSync(eAtCmd cmd, uint8_t *message, uint32_t input, enum_save
         {
                 timer_t cmdTimer;
                 Timer_Create(&cmdTimer, cmdTime);
+                LOGF("Sending AT command: %s\r\n", text);
                 if (cmd == AT_CMD_SEND_MESSAGE)
                 {
                         Lora_at_send(text, input_size);
@@ -430,6 +431,7 @@ static uint32_t Lora_at_send(uint8_t *cmdData, uint32_t dataSize)
 
 void Lora_at_rxProcess(atcbfn fn, void *atcbpr, uint8_t *done, eAtCmd cmd)
 {
+        LOG("----- Receive data ------\r\n");
         static uint8_t overflow = 0;
         uint8_t *buf = Lora_buf;
         memset(buf, 0x00, RX_PROCESS_BUF_SIZE);
@@ -496,15 +498,6 @@ void Lora_at_rxProcess(atcbfn fn, void *atcbpr, uint8_t *done, eAtCmd cmd)
                 }
         } while (ret != 0 && cnt < RX_PROCESS_BUF_SIZE);
 
-        if (cnt)
-        {
-                LOGF("Lora Received Data (%lu bytes): ", cnt);
-                for (uint32_t i = 0; i < cnt; i++)
-                {
-                        LOGF("%02X ", buf[i]); // Print each byte in hex format
-                }
-                LOG("\r\n");
-        }
         switch (rx_tok_matching(buf, cnt))
         {
         case MSG_ERROR:
@@ -565,6 +558,7 @@ void Lora_at_rxProcess(atcbfn fn, void *atcbpr, uint8_t *done, eAtCmd cmd)
                 }
                 break;
         }
+        LOG("\r\n");
 }
 
 /*------------------------------------------------------------------------------
@@ -635,13 +629,18 @@ void Lora_at_init(void)
 {
         System_DelayMs(1500); // Make sure module is stable
         uart_drv_buffer_clear();
-        Lora_at_cmdSync(AT_CMD_AT, NULL, NULL, SAVE, 0, NULL, NULL, 0);
+        Lora_at_cmdSync(AT_CMD_AT, NULL, NULL, SAVE, 0, NULL, NULL, 0); // Send Command AT
         if (UserData_getPointer()->SystemData.Provision_state == PROVISION_SUCCESS)
         {
+                LOG("Lora change Mode to Unicast\r\n");
                 Lora_ChangMode(Unicast);
+                LOG("Lora set destination address\r\n");
                 Lora_SetDstAddr(g_userData.SystemData.Dst_addr);
+                LOG("Lora set channel\r\n");
                 Lora_SetChannel(UserData_getPointer()->SystemData.ChannelID);
+                LOG("Lora set pain ID\r\n");
                 Lora_SetPainID(UserData_getPointer()->SystemData.PainID);
+                LOG("Lora config condition\r\n");
                 Lora_configCondition();
         }
         else
@@ -935,6 +934,7 @@ void Lora_SetDstAddr(uint16_t Lora_dst_addr_set)
  *-----------------------------------------------------------------------------*/
 void Lora_SendMsg(uint8_t *data, uint32_t size)
 {
+        LOGF("Lora_SendMsg %lu bytes\r\n", (uint32_t)size);
         Lora_msg_result = MSG_NONE;
         Lora_at_cmdSync(AT_CMD_SEND_MESSAGE, data, NULL, SAVE, size, NULL, NULL, 3500);
 }
